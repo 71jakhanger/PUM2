@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P.U.M.</title>
+    <link rel="stylesheet" href="static/styles3.css">
+</head>
+<body>
+    <h1>
+        Total done: {{total}}/100.000
+    </h1>
+    <ol>
+        {% for name in names %}
+            <li>{{ name }}</li>
+        {% endfor %}
+    </ol>
+    <form method="post" action="/AddAdmin">
+        <input type="number" name="number">
+        <button type="submit" name="button" value="add">Add</button>
+    </form>
+
+    <form method="post" action="/delete_user">
+        <input type="text" name="name">
+        <button type="submit" name="button" value="delete_user">Delete mf</button>
+    </form>
+
+    <form method="post" action="/update_number">
+        <input type="text" name="name">
+        <input type="number" name="number">
+        <button type="submit" name="button" value="update_number">mf's new number:</button>
+    </form>
+    <form method="post" action="/logout">
+        <button type="submit" name="button" value="logout">logout</button>
+    </form>
+<a href="/AboutUs">About us</a>
+</body>
+</html>

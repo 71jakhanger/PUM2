@@ -1,0 +1,98 @@
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000; /* Черный фон */
+    background-image: url('bg.jpeg');
+    background-size: cover;
+    color: #FFD702; /* Желтый текст */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #FFD702; /* Желтый заголовок */
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+li {
+    font-size: 18px;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #333333; /* Темно-серый фон для списка */
+    border-radius: 5px;
+    color: #FFD702; /* Желтый текст */
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); /* Легкая тень */
+}
+
+form {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #FFD702; /* Желтая рамка */
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #222222; /* Темно-серый фон поля ввода */
+    color: #FFD702; /* Желтый текст поля ввода */
+}
+
+/* Стили для кнопок */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FFD702; /* Желтая кнопка */
+    color: #000000; /* Черный текст на кнопке */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    background-color: #FFB302; /* Более темный желтый при наведении */
+}
+
+/* Стили для кнопок админских действий (Delete и Update) */
+button[name="button"][value="delete_user"],
+button[name="button"][value="update_number"] {
+    background-color: #FF0000; /* Красные кнопки для админских действий */
+    color: #FFFFFF; /* Белый текст */
+}
+
+button[name="button"][value="delete_user"]:hover,
+button[name="button"][value="update_number"]:hover {
+    background-color: #CC0000; /* Более темный красный при наведении */
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #FFD702; /* Желтые ссылки */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

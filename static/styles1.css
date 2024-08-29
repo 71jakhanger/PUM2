@@ -1,0 +1,66 @@
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000; /* Черный фон на случай, если изображение не загрузится */
+    background-image: url('PUMbg.jpeg');
+    background-size: cover;
+    background-position: center;
+    color: #FFD702; /* Желтый текст */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+form {
+    background-color: rgba(51, 51, 51, 0.90); /* Темно-серый фон формы с прозрачностью 80% */
+    padding: 70px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); /* Легкая тень */
+    width: 300px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #FFD702; /* Желтый заголовок */
+}
+
+input{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #FFD702; /* Желтая рамка */
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #222222; /* Темно-серый фон поля ввода */
+    color: #FFD702; /* Желтый текст поля ввода */
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FFD702; /* Желтая кнопка */
+    color: #000000; /* Черный текст на кнопке */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #FFB302; /* Более темный желтый при наведении */
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #FFD702; /* Желтые ссылки */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P.U.M.</title>
+    <link rel="stylesheet" href="static/styles2.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            background-image: url('static/bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: #FFD702;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .indicator {
+            margin-top: 20px;
+            background-color: #333333;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            color: #FFD702;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard {
+            flex: 1;
+            margin-right: 20px;
+            max-width: 50%;
+        }
+
+        .calendar {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calendar-table th, .calendar-table td {
+            border: 1px solid #FFD702;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .calendar-table th {
+            background-color: #333333;
+            color: #FFD702;
+        }
+
+        .calendar-table td {
+            background-color: #222222;
+            color: #FFD702;
+        }
+
+        .calendar-table td.today {
+            background-color: #FFB302;
+            color: #000000;
+        }
+
+        .calendar-table td.end {
+            background-color: #FF4C4C;
+            color: #FFFFFF;
+        }
+
+        form {
+            background-color: #333333;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #FFD702;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #FFD702;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #222222;
+            color: #FFD702;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #FFD702;
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #FFB302;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #FFD702;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .leaderboard, .calendar {
+                max-width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Total done: {{total}}/100.000</h1>
+
+    <div class="container">
+        <div class="leaderboard">
+            <ol>
+                {% for name in names %}
+                    <li> {{ name }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="calendar">
+            <h2>Calendar for September 2024</h2>
+            <table class="calendar-table">
+                <thead>
+                    <tr>
+                        <th>Sun</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body">
+                    <!-- JavaScript will insert calendar rows here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <form method="post" action="/add">
+        <input type="number" name="number" placeholder="Number of pushups">
+        <button type="submit" name="button" value="add">Add</button>
+    </form>
+    <form method="post" action="/logout">
+        <button type="submit" name="button" value="logout">Logout</button>
+    </form>
+    <div class="indicator">
+        Coefficient: {{k}}
+    </div>
+    <a href="/AboutUs">About us</a>
+
+    <script>
+        function generateCalendar(year, month) {
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const firstDay = new Date(year, month - 1, 1).getDay();
+            const calendar = [];
+            let week = [];
+
+            // Add empty cells for days before the start of the month
+            for (let i = 0; i < firstDay; i++) {
+                week.push({ day: '', class: '' });
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                let className = '';
+                if (day === new Date().getDate() && month === new Date().getMonth() + 1) {
+                    className = 'today'; // Highlight today's date
+                }
+                if (day === daysInMonth) {
+                    className = 'end'; // Highlight last day of the month
+                }
+                week.push({ day: day, class: className });
+                if (week.length === 7) {
+                    calendar.push(week);
+                    week = [];
+                }
+            }
+
+            // Add empty cells for days after the end of the month
+            while (week.length < 7) {
+                week.push({ day: '', class: '' });
+            }
+            if (week.length > 0) {
+                calendar.push(week);
+            }
+
+            return calendar;
+        }
+
+        // Generate and display the calendar
+        function displayCalendar() {
+            const year = 2024;
+            const month = 9; // September
+
+            const calendar = generateCalendar(year, month);
+            const calendarElement = document.getElementById('calendar-body');
+
+            calendarElement.innerHTML = '';
+            calendar.forEach(week => {
+                const row = document.createElement('tr');
+                week.forEach(day => {
+                    const cell = document.createElement('td');
+                    cell.textContent = day.day;
+                    if (day.class) cell.classList.add(day.class);
+                    row.appendChild(cell);
+                });
+                calendarElement.appendChild(row);
+            });
+        }
+
+        window.onload = displayCalendar;
+    </script>
+</body>
+</html>

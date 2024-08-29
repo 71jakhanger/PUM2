@@ -1,0 +1,20 @@
+[
+    {
+        "admin": true,
+        "name": "ZYZZ",
+        "number": 284,
+        "password": "password"
+    },
+    {
+        "admin": false,
+        "name": "Jakhanger",
+        "number": 69,
+        "password": "password"
+    },
+    {
+        "admin": false,
+        "name": "Arny",
+        "number": 1005,
+        "password": "89"
+    }
+]
