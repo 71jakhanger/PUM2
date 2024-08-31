@@ -1,20 +1,20 @@
 [
     {
         "admin": true,
-        "name": "ZYZZ",
-        "number": 284,
-        "password": "password"
-    },
-    {
-        "admin": false,
         "name": "Jakhanger",
-        "number": 69,
+        "number": 4587,
         "password": "password"
     },
     {
-        "admin": false,
-        "name": "Arny",
-        "number": 1005,
-        "password": "89"
+        "admin": true,
+        "name": "Daler",
+        "number": 1373,
+        "password": "password"
+    },
+    {
+        "admin": true,
+        "name": "Maximka",
+        "number": 58,
+        "password": "ola"
     }
 ]

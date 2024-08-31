@@ -128,7 +128,10 @@ def home():
 @app.route("/add", methods=["POST"])
 def add():
     form = request.form
-    number = int(form['number'])
+    number = form['number']
+    if number == "":
+        number = 0
+    number = int(number)
     username = request.cookies.get('username')
     if not username:
         return redirect('/')
@@ -156,15 +159,18 @@ def add():
 @app.route("/AddAdmin", methods=["POST"])
 def AddAdmin():
     form = request.form
-    number = int(form['number'])
+    number = form['number']
+    if number =="":
+        number = 0
+    number = int(number)
     username = request.cookies.get('username')
     if not username:
         return redirect('/')
 
-    if number > 600:
-        number = 600
-    elif number < -600:
-        number = -600
+    if number > 1200:
+        number = 1200
+    elif number < -1200:
+        number = -1200
 
     with open('names.json', 'r') as file:
         users = json.load(file)
@@ -198,7 +204,7 @@ def admin():
     for user in users:
         troll = f"{user['name']} - {user['number']}"
         mass.append(troll)
-    return render_template('admin.html', total=count_total(), names=mass)
+    return render_template('admin.html', total=count_total(), names=mass,  k = k())
 
 
 @app.route('/delete_user', methods=["POST"])
