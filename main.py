@@ -1,4 +1,23 @@
-from flask import Flask, render_template, request, redirect, make_response, json
+from appwrite.client import Client
+from appwrite.services.databases import Databases
+from appwrite.id import ID
+
+from appwrite.query import Query
+
+client = Client()
+client.set_endpoint('https://cloud.appwrite.io/v1')
+client.set_project('66d480b50014b63a691e')
+client.set_key('e85c438bf4c78a0fbe624610a14466080516ee6326e048a6176b0c4813e66d0e13124e68f24b5244d63eb9a740744f34b38334eca877381cabf5e1c217211862a737e494071920f4f7b1c1c92323c0f5894140d0a5d59a4a7d32c9a6dfec83b0c3a23062a9cbb69386255ec3d3ef12f48860a06c1e6f074b6604058013e20383')
+
+
+databases = Databases(client)
+
+databaseID='66d484b90018dc2e460c'
+
+collectionID='66d484c9003082e52a03'
+
+
+from flask import Flask, render_template, request, redirect, make_response
 from datetime import datetime, timedelta
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -13,10 +32,13 @@ def fix(users):
                 users[j],users[j-1] = users[j-1],users[j]
 def count_total():
     total = 0
-    with open("names.json", 'r') as file:
-        names = json.load(file)
-    for name in names:
-        total += name['number']
+
+    accounts = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
+    for account in accounts['documents']:
+        total += account['number']
     return total
 
 
@@ -54,10 +76,12 @@ def index():
     username = request.cookies.get('username')
     global name1
     name1 = username
-    with open("names.json", 'r') as file:
-        users = json.load(file)
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
     case = "Oh"
-    for user in users:
+    for user in users['documents']:
         if username == user['name'] and user['admin']==True:
             case = "admin"
             break
@@ -79,10 +103,12 @@ def login():
     password = form['password']
     global name1
     name1 = name
-    with open('names.json', 'r') as file:
-        names = json.load(file)
+    names = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
     access = 0
-    for user in names:
+    for user in names['documents']:
         if user['name'] == name and user['password'] == password:
             access = 1
             break
@@ -102,9 +128,12 @@ def login():
             "number": 0,
             "admin": False
         }
-        names.append(new_user)
-        with open('names.json', 'w') as file:
-            json.dump(names, file, indent=4)
+        databases.create_document(
+                database_id = databaseID,
+                collection_id = collectionID,
+                document_id = ID.unique(),
+                data = new_user
+            )
         resp = make_response(redirect('/home'))
         set_cookie(resp, name)
         return resp
@@ -113,14 +142,16 @@ def login():
 def home():
     mass = []
     global name1
-    with open('names.json', 'r') as file:
-        users = json.load(file)
-    for user in users:
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
+    for user in users['documents']:
         if user['name'] == name1 and user['admin'] == True:
             return redirect('/admin')
-    fix(users)
-    users.reverse()
-    for user in users:
+    fix(users['documents'])
+    users['documents'].reverse()
+    for user in users['documents']:
         troll = f"{user['name']} : {user['number']}"
         mass.append(troll)
     return render_template('home.html', total=count_total(), names=mass, k = k())
@@ -141,18 +172,29 @@ def add():
     elif number < -600:
         number = -600
 
-    with open('names.json', 'r') as file:
-        users = json.load(file)
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
 
-    for user in users:
+    for user in users['documents']:
         if user['name'] == username:
             if user['number'] < 0:
                 user['number'] = 0
             user['number'] += number
+            print(user['$id'])
+            print(user)
+            data={'name': user['name'], 'password':user['password'],'number':user['number'],'admin':user['admin']}
+            databases.update_document(
+                database_id = databaseID,
+                collection_id = collectionID,
+                document_id = user['$id'],
+                data = data,
+            )
+
             break
 
-    with open('names.json', 'w') as file:
-        json.dump(users, file, indent=4)
+
 
     return redirect("/home")
 
@@ -172,19 +214,24 @@ def AddAdmin():
     elif number < -1200:
         number = -1200
 
-    with open('names.json', 'r') as file:
-        users = json.load(file)
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
 
-    for user in users:
+    for user in users['documents']:
         if user['name'] == username:
             if user['number'] < 0:
                 user['number'] = 0
             user['number'] += number
+            data={'name': user['name'], 'password':user['password'],'number':user['number'],'admin':user['admin']}
+            databases.update_document(
+                database_id = databaseID,
+                collection_id = collectionID,
+                document_id = user['$id'],
+                data = data
+            )
             break
-
-    with open('names.json', 'w') as file:
-        json.dump(users, file, indent=4)
-
     return redirect("/admin")
 
 
@@ -197,11 +244,13 @@ def logout():
 @app.route('/admin')
 def admin():
     mass = []
-    with open('names.json', 'r') as file:
-        users = json.load(file)
-    fix(users)
-    users.reverse()
-    for user in users:
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
+    fix(users['documents'])
+    users['documents'].reverse()
+    for user in users['documents']:
         troll = f"{user['name']} - {user['number']}"
         mass.append(troll)
     return render_template('admin.html', total=count_total(), names=mass,  k = k())
@@ -210,13 +259,24 @@ def admin():
 @app.route('/delete_user', methods=["POST"])
 def delete_user():
     name = request.form['name']
-    with open('names.json', 'r') as file:
-        users = json.load(file)
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
 
-    users = [user for user in users if user['name'] != name]
+    name_id=databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID,
+        queries = Query.equal('name',name)
+    )
+    print(name_id['documents'])
+    name_id=name_id['documents'][0]['$id']
 
-    with open('names.json', 'w') as file:
-        json.dump(users, file, indent=4)
+    databases.delete_document(
+        database_id = databaseID,
+        collection_id = collectionID,
+        document_id = name_id
+    )
 
     return redirect('/home')
 
@@ -229,18 +289,25 @@ def update_number():
     if number <0:
         number = 0
 
-    with open('names.json', 'r') as file:
-        users = json.load(file)
+    users = databases.list_documents(
+        database_id = databaseID,
+        collection_id = collectionID
+    )
 
-    for user in users:
+    for user in users['documents']:
         if user['name'] == name:
             if user['number'] < 0:
                 user['number'] = 0
             user['number'] = number
+            data = {'name': user['name'], 'password': user['password'], 'number': user['number'],
+                    'admin': user['admin']}
+            databases.update_document(
+        database_id = databaseID,
+        collection_id = collectionID,
+        document_id = user['$id'],
+        data = data
+    )
             break
-
-    with open('names.json', 'w') as file:
-        json.dump(users, file, indent=4)
 
     return redirect('/admin')
 
